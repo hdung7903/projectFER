@@ -9,6 +9,11 @@
       "id": "2",
       "username": "teacher",
       "password": "123"
+    },
+    {
+      "id":"3",
+      "username":"tuancui",
+      "password":"tuancuivl"
     }
   ]
 }
