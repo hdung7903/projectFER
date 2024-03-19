@@ -14,77 +14,71 @@ function AddCourse() {
 
   const handleAddChapter = () => {
     const newChapter = {
-      id: `chapter${course.chapters.length + 1}`,
+      id: (course.chapters.length + 1).toString(),
       title: '',
       lessons: [],
     };
     setCourse({ ...course, chapters: [...course.chapters, newChapter] });
   };
 
-  const handleAddLesson = (chapterId) => {
-    const updatedChapters = course.chapters.map((chapter) => {
-      if (chapter.id === chapterId) {
-        const lessonNumber = chapter.lessons.length + 1;
-        const chapterNumber = chapter.id.replace('chapter', '');
-        const newLessonId = `${chapterNumber}.${lessonNumber}`;
-        const newLesson = { id: newLessonId, title: '' };
-        return { ...chapter, lessons: [...chapter.lessons, newLesson] };
-      }
-      return chapter;
-    });
+  const handleAddLesson = (chapterIndex) => {
+    const updatedChapters = [...course.chapters];
+    const lessonNumber = updatedChapters[chapterIndex].lessons.length + 1;
+    const newLesson = { id: `${chapterIndex + 1}.${lessonNumber}`, title: '' };
+    updatedChapters[chapterIndex].lessons.push(newLesson);
+    
     setCourse({ ...course, chapters: updatedChapters });
   };
 
-  const handleChapterTitleChange = (chapterId, newValue) => {
-    const updatedChapters = course.chapters.map(chapter => {
-      if (chapter.id === chapterId) {
-        return { ...chapter, title: newValue };
-      }
-      return chapter;
-    });
+  const handleChapterTitleChange = (chapterIndex, newValue) => {
+    const updatedChapters = [...course.chapters];
+    updatedChapters[chapterIndex].title = newValue;
     setCourse({ ...course, chapters: updatedChapters });
   };
 
-  const handleLessonTitleChange = (chapterId, lessonId, newValue) => {
-    const updatedChapters = course.chapters.map(chapter => {
-      if (chapter.id === chapterId) {
-        const updatedLessons = chapter.lessons.map(lesson => {
-          if (lesson.id === lessonId) {
-            return { ...lesson, title: newValue };
-          }
-          return lesson;
-        });
-        return { ...chapter, lessons: updatedLessons };
-      }
-      return chapter;
-    });
+  const handleLessonTitleChange = (chapterIndex, lessonIndex, newValue) => {
+    let updatedChapters = [...course.chapters];
+    let updatedLessons = [...updatedChapters[chapterIndex].lessons];
+    updatedLessons[lessonIndex].title = newValue;
+    updatedChapters[chapterIndex].lessons = updatedLessons;
     setCourse({ ...course, chapters: updatedChapters });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(addCourse(course));
+
+    const courseDataToSave = {
+      id: course.id,
+      title: course.title,
+      chapters: course.chapters.map(chapter => ({
+        id: chapter.id,
+        title: chapter.title,
+        lessons: chapter.lessons.map(lesson => ({
+          id: lesson.id,
+          title: lesson.title
+        }))
+      }))
+    };
+
+    dispatch(addCourse(courseDataToSave));
     setCourse({ id: uuidv4(), title: '', chapters: [] });
   };
 
-  const handleDeleteChapter = (chapterId) => {
-    const updatedChapters = course.chapters.filter(chapter => chapter.id !== chapterId);
+  const handleDeleteChapter = (chapterIndex) => {
+    const updatedChapters = course.chapters.filter((_, index) => index !== chapterIndex);
     setCourse({ ...course, chapters: updatedChapters });
   };
 
-  const handleDeleteLesson = (chapterId, lessonId) => {
-    const updatedChapters = course.chapters.map(chapter => {
-      if (chapter.id === chapterId) {
-        const updatedLessons = chapter.lessons.filter(lesson => lesson.id !== lessonId);
-        return { ...chapter, lessons: updatedLessons };
-      }
-      return chapter;
-    });
+  const handleDeleteLesson = (chapterIndex, lessonIndex) => {
+    let updatedChapters = [...course.chapters];
+    let updatedLessons = updatedChapters[chapterIndex].lessons.filter((_, index) => index !== lessonIndex);
+    updatedChapters[chapterIndex].lessons = updatedLessons;
     setCourse({ ...course, chapters: updatedChapters });
   };
 
   const isSubmitDisabled = course.title.trim() === '' ||
     course.chapters.some(chapter => chapter.title.trim() === '' || chapter.lessons.some(lesson => lesson.title.trim() === ''));
+
   return (
     <Container className='my-4'>
       <Form onSubmit={handleSubmit}>
@@ -114,14 +108,14 @@ function AddCourse() {
                     type="text"
                     placeholder={`Chapter ${chapterIndex + 1} title`}
                     value={chapter.title}
-                    onChange={(e) => handleChapterTitleChange(chapter.id, e.target.value)}
+                    onChange={(e) => handleChapterTitleChange(chapterIndex, e.target.value)}
                   />
                 </Col>
                 <Col sm={2}>
-                  <CloseButton onClick={() => handleDeleteChapter(chapter.id)} className="float-end" />
+                  <CloseButton onClick={() => handleDeleteChapter(chapterIndex)} className="float-end" />
                 </Col>
               </Form.Group>
-              {chapter.lessons.map((lesson) => (
+              {chapter.lessons.map((lesson, lessonIndex) => (
                 <Form.Group as={Row} className="mb-3" key={lesson.id}>
                   <Form.Label column sm={2}>
                     Lesson {lesson.id}:
@@ -129,19 +123,19 @@ function AddCourse() {
                   <Col sm={8}>
                     <Form.Control
                       type="text"
-                      placeholder={`Lesson ${lesson.id} title`}
+                      placeholder={`Lesson ${lessonIndex + 1} title`}
                       value={lesson.title}
-                      onChange={(e) => handleLessonTitleChange(chapter.id, lesson.id, e.target.value)}
+                      onChange={(e) => handleLessonTitleChange(chapterIndex, lessonIndex, e.target.value)}
                     />
                   </Col>
                   <Col sm={2}>
-                    <CloseButton onClick={() => handleDeleteLesson(chapter.id, lesson.id)} className="float-end" />
+                    <CloseButton onClick={() => handleDeleteLesson(chapterIndex, lessonIndex)} className="float-end" />
                   </Col>
                 </Form.Group>
               ))}
               <Button
                 variant="secondary"
-                onClick={() => handleAddLesson(chapter.id)}
+                onClick={() => handleAddLesson(chapterIndex)}
               >
                 Add Lesson
               </Button>
@@ -149,7 +143,7 @@ function AddCourse() {
           </Card>
         ))}
 
-        <Button variant="primary" onClick={handleAddChapter} >
+        <Button variant="primary" onClick={handleAddChapter}>
           Add Chapter
         </Button>
         <Button variant="success" type="submit" className="ms-2" disabled={isSubmitDisabled}>

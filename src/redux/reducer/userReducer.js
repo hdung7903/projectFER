@@ -2,7 +2,7 @@ import { USER_LOGIN, USER_LOGOUT } from "../actions/types";
 
 const INITIAL_STATE = {
   username: "",
-  auth: false,
+  auth: localStorage.getItem('auth') === 'true',
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {

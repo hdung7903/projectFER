@@ -18,12 +18,11 @@ function AppRoute() {
           <Route index element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/assessment" element={<Assessment />} />
+          <Route path="/add-question" element={<AssessmentForm />} />  
           <Route path="/update-assessment/:id" element={<AssessmentEdit />} />   
           <Route path="/course" element={<CourseList />} />
           <Route path="/course/create" element={<AddCourse />} />          
-          <Route path="/course/edit/:id" element={<EditCourse />} />
-          <Route path="/add-question" element={<AssessmentForm />} />
-                
+          <Route path="/course/edit/:id" element={<EditCourse />} />              
         </Route>
         <Route path="/login" element={<LoginHandle />} />
       </Route>

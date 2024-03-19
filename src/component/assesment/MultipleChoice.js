@@ -1,79 +1,74 @@
 import React, { useState } from 'react';
 import { Button, Table, Form } from 'react-bootstrap';
-import {toast} from 'react-toastify'
-import axios from 'axios';
-import uuid from 'react-uuid';
 
-function MultipleChoice({ onSubmit }) {
+function MultipleChoice({ setQuestions }) {
     const [totalQuestions, setTotalQuestions] = useState(0);
-    const [questions, setQuestions] = useState([]);
+    const [localQuestions, setLocalQuestions] = useState([]);
 
     const handleTotalQuestionChange = (event) => {
-        setTotalQuestions(event.target.value);
+        setTotalQuestions(parseInt(event.target.value, 10) || 0);
     };
 
-    const handleQuestionTextChange = (index, text) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[index].text = text;
-        setQuestions(updatedQuestions);
+    const handleQuestionTextChange = (questionIndex, text) => {
+        const updatedQuestions = localQuestions.map((q, i) => i === questionIndex ? { ...q, text: text } : q);
+        setLocalQuestions(updatedQuestions);
     };
 
-    const handleAddOption = (index) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[index].options.push('');
-        setQuestions(updatedQuestions);
+    const handleAddOption = (questionIndex) => {
+        const updatedQuestions = localQuestions.map((q, i) => i === questionIndex ? { ...q, options: [...q.options, ''] } : q);
+        setLocalQuestions(updatedQuestions);
     };
 
     const handleOptionChange = (questionIndex, optionIndex, text) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[questionIndex].options[optionIndex] = text;
-        setQuestions(updatedQuestions);
+        const updatedQuestions = localQuestions.map((q, i) => i === questionIndex ? { ...q, options: q.options.map((o, j) => j === optionIndex ? text : o) } : q);
+        setLocalQuestions(updatedQuestions);
     };
 
-    const handleAnswerChange = (index, text) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[index].answer = text;
-        setQuestions(updatedQuestions);
+    const handleAnswerChange = (questionIndex, text) => {
+        const updatedQuestions = localQuestions.map((q, i) => i === questionIndex ? { ...q, answer: text } : q);
+        setLocalQuestions(updatedQuestions);
     };
 
     const addQuestions = () => {
         const newQuestions = Array.from({ length: totalQuestions }, (_, i) => ({
-            id: i+1,
+            id: i + 1,
             text: '',
             options: [''],
             answer: '',
         }));
-        setQuestions(newQuestions);
+        setLocalQuestions(newQuestions);
     };
 
-    const handleAddQuestionsToAssessment = () => {
-        const filledQuestions = questions.filter(question => question.text.trim() !== '');
-        onSubmit(filledQuestions); // Pass the questions up to the AssessmentForm
-    };
+    // When local state changes, lift state up
+    React.useEffect(() => {
+        setQuestions(localQuestions);
+    }, [localQuestions, setQuestions]);
 
     return (
         <>
-            <Form.Label htmlFor="totalquestion">Number of Questions</Form.Label>
+            <Form.Label htmlFor="totalQuestionsMC">Number of Questions</Form.Label>
             <Form.Control
                 type="number"
-                id="totalquestion"
-                aria-describedby="passwordHelpBlock"
+                id="totalQuestionsMC"
+                value={totalQuestions}
                 onChange={handleTotalQuestionChange}
             />
-            <Button onClick={addQuestions}>Add Questions</Button>
+            <Button variant="primary" onClick={addQuestions} style={{ marginBottom: '10px', marginTop: '10px' }}>
+                Add Questions
+            </Button>
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>No.</th>
+                        <th>#</th>
                         <th>Question</th>
                         <th>Options</th>
                         <th>Answer</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {questions.map((question, qIndex) => (
+                    {localQuestions.map((question, qIndex) => (
                         <tr key={qIndex}>
-                            <td>{question.id}</td>
+                            <td>{qIndex + 1}</td>
                             <td>
                                 <Form.Control
                                     type="text"
@@ -83,14 +78,18 @@ function MultipleChoice({ onSubmit }) {
                             </td>
                             <td>
                                 {question.options.map((option, oIndex) => (
-                                    <Form.Control
-                                        key={oIndex}
-                                        type="text"
-                                        value={option}
-                                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-                                    />
+                                    <React.Fragment key={oIndex}>
+                                        <Form.Control
+                                            type="text"
+                                            value={option}
+                                            onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                                            style={{ marginBottom: '5px' }}
+                                        />
+                                    </React.Fragment>
                                 ))}
-                                <Button onClick={() => handleAddOption(qIndex)}>Add Option</Button>
+                                <Button variant="secondary" size="sm" onClick={() => handleAddOption(qIndex)}>
+                                    Add Option
+                                </Button>
                             </td>
                             <td>
                                 <Form.Control
@@ -98,7 +97,7 @@ function MultipleChoice({ onSubmit }) {
                                     value={question.answer}
                                     onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
                                 >
-                                    <option value="">Select answer</option>
+                                    <option value="">Select Answer</option>
                                     {question.options.map((option, oIndex) => (
                                         <option key={oIndex} value={option}>
                                             {option}
@@ -110,7 +109,6 @@ function MultipleChoice({ onSubmit }) {
                     ))}
                 </tbody>
             </Table>
-            <Button onClick={handleAddQuestionsToAssessment}>Submit Questions</Button>
         </>
     );
 }

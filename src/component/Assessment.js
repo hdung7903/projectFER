@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Container, Row, Col, Modal, Card } from 'react-bootstrap';
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 function Assessment() {
     const [assessments, setAssessments] = useState([]);
     const [assessTypes, setAssessTypes] = useState([]);
-
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteAssessmentId, setDeleteAssessmentId] = useState(null);
     useEffect(() => {
         fetchAssessment();
     }, [])
+
     const navigate = useNavigate();
 
-    const deleteAssessment = async (id) => {
+    const confirmDelete = (id) => {
+        setShowDeleteModal(true);
+        setDeleteAssessmentId(id);
+    };
+
+    const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8000/assessments/${id}`);
-            // Update the assessments state by filtering out the deleted assessment
-            setAssessments(assessments.filter((assessment) => assessment.id !== id));
+            await axios.delete(`http://localhost:8000/assessments/${deleteAssessmentId}`);
+            setAssessments(assessments.filter((assessment) => assessment.id !== deleteAssessmentId));
+            setShowDeleteModal(false);
         } catch (error) {
             console.error('Error deleting assessment:', error);
         }
@@ -45,36 +54,74 @@ function Assessment() {
     };
 
     return (
-        <>
-            <h2>Assessment List</h2>
-            <Button><Link to="/add-question" className='text-decoration-none text-white'>Add Assessment</Link></Button>
-            <Table striped bordered hover>
-                <thead>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Create Date</th>
-                    <th>Type</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
-                    {assessments.map((assessment) => {
-                        const assessType = assessTypes.find((type) => type?.id === assessment?.typeId);
-                        return (
-                            <tr key={assessment.id}>
-                                <td>{assessment.id}</td>
-                                <td>{assessment.name}</td>
-                                <td>{formatDate(assessment.createDate)}</td>
-                                <td>{assessType ? assessType.type : 'Unknown'}</td>
-                                <td>
-                                    <Button onClick={() => navigateToUpdatePage(assessment.id)}>Update</Button>{' '}
-                                    <Button onClick={() => deleteAssessment(assessment.id)} variant="danger">Delete</Button>
-                                </td>
+        <Container className="my-4">
+            <Row className="mb-2">
+                <Col>
+                    <h2>Assessment List</h2>
+                </Col>
+                <Col className="text-right">
+                    <Link to="/add-question" className='btn btn-primary'>
+                        <FontAwesomeIcon icon={faPlus} /> Add Assessment
+                    </Link>
+                </Col>
+            </Row>
+            <Card>
+                <Card.Body>
+                    <Table striped bordered hover responsive>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Create Date</th>
+                                <th>Type</th>
+                                <th>Action</th>
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>
-        </>
+                        </thead>
+                        <tbody>
+                            {assessments.map((assessment, index) => {
+                                const assessType = assessTypes.find((type) => type?.id === assessment?.typeId);
+                                return (
+                                    <tr key={assessment.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{assessment.name}</td>
+                                        <td>{formatDate(assessment.createDate)}</td>
+                                        <td>{assessType ? assessType.type : 'Unknown'}</td>
+                                        <td>
+                                            <Button 
+                                                variant="outline-primary" 
+                                                className="mr-2" 
+                                                onClick={() => navigateToUpdatePage(assessment.id)}>
+                                                <FontAwesomeIcon icon={faEdit} /> Edit
+                                            </Button>
+                                            <Button 
+                                                variant="outline-danger" 
+                                                onClick={() => confirmDelete(assessment.id)}>
+                                                <FontAwesomeIcon icon={faTrashAlt} /> Delete
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
+                </Card.Body>
+            </Card>
+
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Deletion</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Are you sure you want to delete this assessment?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDelete}>
+                        Confirm Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
     );
 }
 

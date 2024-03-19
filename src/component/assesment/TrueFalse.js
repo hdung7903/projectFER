@@ -1,27 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Table, Form } from 'react-bootstrap';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import uuid from 'react-uuid';
 
-function TrueFalse({ onSubmit }) {
+function TrueFalse({ setQuestions }) {
     const [totalQuestions, setTotalQuestions] = useState(0);
-    const [questions, setQuestions] = useState([]);
+    const [localQuestions, setLocalQuestions] = useState([]);
 
     const handleTotalQuestionChange = (event) => {
-        setTotalQuestions(event.target.value);
+        setTotalQuestions(parseInt(event.target.value, 10) || 0);
     };
 
     const handleQuestionTextChange = (index, text) => {
-        const updatedQuestions = [...questions];
+        const updatedQuestions = [...localQuestions];
         updatedQuestions[index].text = text;
-        setQuestions(updatedQuestions);
+        setLocalQuestions(updatedQuestions);
     };
 
     const handleOptionChange = (index, answer) => {
-        const updatedQuestions = [...questions];
+        const updatedQuestions = [...localQuestions];
         updatedQuestions[index].answer = answer;
-        setQuestions(updatedQuestions);
+        setLocalQuestions(updatedQuestions);
     };
 
     const addQuestions = () => {
@@ -30,37 +27,40 @@ function TrueFalse({ onSubmit }) {
             newQuestions.push({
                 id: i + 1,
                 text: '',
-                answer: null,
+                answer: '',
             });
         }
-        setQuestions(newQuestions);
+        setLocalQuestions(newQuestions);
     };
-    const handleAddQuestionsToAssessment = () => {
-        const filledQuestions = questions.filter(question => question.text.trim() !== '');
-        onSubmit(filledQuestions); // Pass the questions up to the AssessmentForm
-    };
+
+    useEffect(() => {
+        setQuestions(localQuestions);
+    }, [localQuestions, setQuestions]);
+
     return (
         <>
-            <Form.Label htmlFor="totalquestion">Number of Questions</Form.Label>
+            <Form.Label htmlFor="totalQuestionsTF">Number of True/False Questions</Form.Label>
             <Form.Control
                 type="number"
-                id="totalquestion"
-                aria-describedby="passwordHelpBlock"
+                id="totalQuestionsTF"
+                value={totalQuestions}
                 onChange={handleTotalQuestionChange}
             />
-            <Button onClick={addQuestions}>Add Questions</Button>
+            <Button variant="primary" onClick={addQuestions} style={{ marginBottom: '10px', marginTop: '10px' }}>
+                Add Questions
+            </Button>
             <Table>
                 <thead>
                     <tr>
-                        <th>No.</th>
+                        <th>#</th>
                         <th>Question</th>
-                        <th>Options</th>
+                        <th>Answer</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {questions.map((question, index) => (
+                    {localQuestions.map((question, index) => (
                         <tr key={index}>
-                            <td>{question.id}</td>
+                            <td>{index + 1}</td>
                             <td>
                                 <Form.Control
                                     type="text"
@@ -88,7 +88,6 @@ function TrueFalse({ onSubmit }) {
                     ))}
                 </tbody>
             </Table>
-            <Button onClick={handleAddQuestionsToAssessment}>Submit Questions</Button>
         </>
     );
 }

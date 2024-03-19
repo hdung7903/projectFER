@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Form, Col, Row, Card, Container, CloseButton } from 'react-bootstrap';
-import { fetchCourses } from '../../redux/actions/courseActions';
-
+import { fetchCourses, updateCourse } from '../../redux/actions/courseActions';
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 function EditCourse() {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -14,7 +15,7 @@ function EditCourse() {
         title: '',
         chapters: []
     });
-    
+
     const courseToEdit = courses.find(course => course.id === id);
 
     useEffect(() => {
@@ -32,9 +33,9 @@ function EditCourse() {
 
     const handleChapterTitleChange = (chapterIndex, newTitle) => {
         setCourse((prevCourse) => {
-            return { 
-                ...prevCourse, 
-                chapters: prevCourse.chapters.map((chapter, index) => 
+            return {
+                ...prevCourse,
+                chapters: prevCourse.chapters.map((chapter, index) =>
                     index === chapterIndex ? { ...chapter, title: newTitle } : chapter
                 )
             };
@@ -43,12 +44,19 @@ function EditCourse() {
 
     const handleAddLesson = (chapterIndex) => {
         setCourse((prevCourse) => {
-            const newChapters = [...prevCourse.chapters];
-            const newLesson = { id: 'new', title: '' }; 
-            newChapters[chapterIndex].lessons.push(newLesson);
+            const newChapters = prevCourse.chapters.map((chapter, index) => {
+                if (index === chapterIndex) {
+                    return {
+                        ...chapter,
+                        lessons: chapter.lessons.concat({ id: uuidv4(), title: '' })
+                    };
+                }
+                return chapter;
+            });
             return { ...prevCourse, chapters: newChapters };
         });
     };
+
 
     const handleDeleteChapter = (chapterId) => {
         setCourse((prevCourse) => ({
@@ -73,10 +81,22 @@ function EditCourse() {
         });
     };
 
+    const handleAddChapter = () => {
+        setCourse((prevCourse) => ({
+            ...prevCourse,
+            chapters: prevCourse.chapters.concat({ id: uuidv4(), title: '', lessons: [] }) // Using a unique ID for each chapter
+        }));
+    };
     const handleSubmit = (event) => {
         event.preventDefault();
-        // dispatch(updateCourse(course.id, course));
-        navigate('/');
+        dispatch(updateCourse(course))
+          .then(() => {
+              toast.success('Course updated successfully!');
+              navigate('/');
+          })
+          .catch((error) => {
+              console.error(error);
+          });
     };
 
     return (
@@ -142,6 +162,9 @@ function EditCourse() {
                         </Card.Body>
                     </Card>
                 ))}
+                <Button variant="secondary" onClick={handleAddChapter}>
+                    Add Chapter
+                </Button>
                 <Button variant="success" type="submit">
                     Update Course
                 </Button>

@@ -1,62 +1,58 @@
-import { useState } from 'react';
-import { Form, Button, Table } from 'react-bootstrap';
-import {toast} from 'react-toastify'
-import axios from 'axios';
-import uuid from 'react-uuid';
+import React, { useState, useEffect } from 'react';
+import { Button, Table, Form } from 'react-bootstrap';
 
-function Essay({ onSubmit }) {
+function Essay({ setQuestions }) {
     const [totalQuestions, setTotalQuestions] = useState(0);
-    const [questions, setQuestions] = useState([]);
+    const [localQuestions, setLocalQuestions] = useState([]);
 
     const handleTotalQuestionChange = (event) => {
-        setTotalQuestions(event.target.value);
+        setTotalQuestions(parseInt(event.target.value, 10) || 0);
     };
 
     const handleQuestionTextChange = (index, text) => {
-        const updatedQuestions = [...questions];
+        const updatedQuestions = [...localQuestions];
         updatedQuestions[index].text = text;
-        setQuestions(updatedQuestions);
+        setLocalQuestions(updatedQuestions);
     };
 
     const addQuestions = () => {
         const newQuestions = [];
         for (let i = 0; i < totalQuestions; i++) {
             newQuestions.push({
-                id: i+1,
+                id: i + 1,
                 text: '',
             });
         }
-        setQuestions(newQuestions);
+        setLocalQuestions(newQuestions);
     };
 
-
-
-    const handleAddQuestionsToAssessment = () => {
-        const filledQuestions = questions.filter(question => question.text.trim() !== '');
-        onSubmit(filledQuestions); 
-    };
+    useEffect(() => {
+        setQuestions(localQuestions);
+    }, [localQuestions, setQuestions]);
 
     return (
         <>
-            <Form.Label htmlFor="totalquestion">Number of Questions</Form.Label>
+            <Form.Label htmlFor="totalQuestionsEssay">Number of Essay Questions</Form.Label>
             <Form.Control
                 type="number"
-                id="totalquestion"
-                aria-describedby="passwordHelpBlock"
+                id="totalQuestionsEssay"
+                value={totalQuestions}
                 onChange={handleTotalQuestionChange}
             />
-            <Button onClick={addQuestions}>Add Questions</Button>
+            <Button variant="primary" onClick={addQuestions} style={{ marginBottom: '10px', marginTop: '10px' }}>
+                Add Questions
+            </Button>
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>No.</th>
+                        <th>#</th>
                         <th>Question</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {questions.map((question, index) => (
+                    {localQuestions.map((question, index) => (
                         <tr key={index}>
-                            <td>{question.id}</td>
+                            <td>{index + 1}</td>
                             <td>
                                 <Form.Control
                                     as="textarea"
@@ -69,7 +65,6 @@ function Essay({ onSubmit }) {
                     ))}
                 </tbody>
             </Table>
-            <Button onClick={handleAddQuestionsToAssessment}>Submit Questions</Button>
         </>
     );
 }
