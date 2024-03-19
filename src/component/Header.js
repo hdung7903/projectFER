@@ -48,14 +48,13 @@ function Header() {
           <Nav>
             {auth ? (
               <div className="d-flex align-items-center">
-              <ReactSwitch onChange={toggleTheme} checked={theme === "dark"} className="me-4" />
-              <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} className={`text-${theme === 'dark' ? 'light' : 'dark'}`} />} id="nav-dropdown" alignRight>
-                <NavDropdown.Item className={`text-${theme === 'dark' ? 'dark' : 'light'}`} >{username}</NavDropdown.Item>
-                <NavDropdown.Item onClick={handleLogOut} className={`text-${theme === 'dark' ? 'dark' : 'light'}`}>
-                  <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-                </NavDropdown.Item>
-              </NavDropdown>
-            </div>
+                <NavDropdown title={<span><FontAwesomeIcon icon={faUserCircle} className={`text-${theme === 'dark' ? 'light' : 'dark'} me-3`} />{username}</span>} id="nav-dropdown" alignBottom>
+                  <NavDropdown.Item onClick={handleLogOut} active={false}>
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+                <ReactSwitch onChange={toggleTheme} checked={theme === "dark"} className="ms-2" />
+              </div>
             ) : (
               <></>
             )}
