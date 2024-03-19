@@ -20,7 +20,7 @@
     {
       "id": 1,
       "name": "Test",
-      "typeId": 1,
+      "typeId": "1",
       "duration": "120",
       "createDate": "2024-03-19T04:31:56.237Z",
       "questions": [
@@ -107,15 +107,15 @@
   ],
   "assess-type": [
     {
-      "id": 1,
+      "id": "1",
       "type": "Multiple Choice"
     },
     {
-      "id": 2,
+      "id": "2",
       "type": "True/False"
     },
     {
-      "id": 3,
+      "id": "3",
       "type": "Essay"
     }
   ],
@@ -130,11 +130,13 @@
           "lessons": [
             {
               "id": "chapter1.1",
-              "title": "Basic Javascript"
+              "title": "Basic Javascript",
+              "link": "https://youtu.be/dSzf0nv6QmM?list=PL_-VfJajZj0UXjlKfBwFX73usByw3Ph9Q"
             },
             {
               "id": "chapter1.2",
-              "title": "Asynchronus"
+              "title": "Asynchronus",
+              "link": ""
             }
           ]
         },
@@ -144,7 +146,8 @@
           "lessons": [
             {
               "id": "chapter2.1",
-              "title": "Bootstrap"
+              "title": "Bootstrap",
+              "link": ""
             }
           ]
         },
@@ -165,7 +168,8 @@
           "lessons": [
             {
               "id": "1.1",
-              "title": "What is Javascript? Why Javascript"
+              "title": "What is Javascript? Why Javascript",
+              "link": "https://www.youtube.com/watch?v=7L0RLrfrBHE"
             }
           ]
         },
@@ -175,7 +179,8 @@
           "lessons": [
             {
               "id": "2.1",
-              "title": "Basic Javascript syntax"
+              "title": "Basic Javascript syntax",
+              "link": ""
             }
           ]
         }
@@ -238,6 +243,26 @@
           ]
         }
       ]
+    }
+  ],
+  "videos": [
+    {
+      "name": "React",
+      "description": "Intro",
+      "link": "https://youtu.be/dSzf0nv6QmM?list=PL_-VfJajZj0UXjlKfBwFX73usByw3Ph9Q",
+      "courseId": "d16ad596-c0ee-4a3e-a027-5376cc5f1298",
+      "chapterId": "chapter1",
+      "lessonId": "chapter1.1",
+      "id": 1
+    },
+    {
+      "name": "AA",
+      "description": "Intro",
+      "link": "https://www.youtube.com/watch?v=7L0RLrfrBHE",
+      "courseId": "c4579de0-d4d9-456d-8ea9-7438bf74746c",
+      "chapterId": "chapter1",
+      "lessonId": "1.1",
+      "id": 2
     }
   ]
 }

@@ -100,7 +100,7 @@ function EditCourse() {
     };
 
     return (
-        <Container className='my-4'>
+        <Container className='pt-5'>
             <Form onSubmit={handleSubmit}>
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={2}>

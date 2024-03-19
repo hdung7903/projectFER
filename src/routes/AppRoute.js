@@ -9,7 +9,8 @@ import AssessmentEdit from '../component/assesment/AssessmentEdit';
 import AddCourse from '../component/course/AddCourse';
 import CourseList from '../component/course/CourseList';
 import EditCourse from '../component/course/EditCourse';
-
+import CourseInfo from '../component/course/CourseInfo';
+import AddVideo from '../component/course/AddVideo';
 function AppRoute() {
   return (
     <Routes>
@@ -21,8 +22,10 @@ function AppRoute() {
           <Route path="/add-question" element={<AssessmentForm />} />  
           <Route path="/update-assessment/:id" element={<AssessmentEdit />} />   
           <Route path="/course" element={<CourseList />} />
+          <Route path="/course/info/:id" element={<CourseInfo />} />
           <Route path="/course/create" element={<AddCourse />} />          
-          <Route path="/course/edit/:id" element={<EditCourse />} />              
+          <Route path="/course/edit/:id" element={<EditCourse />} />
+          <Route path="/video/add" element={<AddVideo />} />              
         </Route>
         <Route path="/login" element={<LoginHandle />} />
       </Route>

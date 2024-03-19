@@ -11,10 +11,6 @@ const fetchCoursesFromState = (courses) => ({
   type: FETCH_COURSES,
   payload: courses,
 });
-const updateCourseInState = (course) => ({
-  type: UPDATE_COURSE,
-  payload: course,
-});
 
 export const addCourse = (courseData) => {
   return dispatch => {
@@ -59,7 +55,6 @@ export const deleteCourse = (courseId) => {
 
 export const updateCourse = (course) => {
   return (dispatch) => {
-    // Return the axios promise here
     return axios.put(`http://localhost:8000/courses/${course.id}`, course)
       .then(response => {
         dispatch({

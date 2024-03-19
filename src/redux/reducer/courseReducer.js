@@ -7,18 +7,16 @@ const initialState = {
   const courseReducer = (state = initialState, action) => {
     switch (action.type) {
       case ADD_COURSE:
-        return { ...state, courses: state.courses.concat(action.payload) };
-  
+        return { ...state, courses: [...state.courses, action.payload] };
       case FETCH_COURSES:
         return { ...state, courses: action.payload };
-      
       case DELETE_COURSES:
         return { ...state, courses: state.courses.filter(course => course.id !== action.payload) };
-      case UPDATE_COURSE:
-        const updatedCourses = state.courses.map(c => 
-          c.id === action.payload.id ? action.payload : c
-        );
-        return { ...state, courses: updatedCourses };    
+        case 'UPDATE_COURSE':
+          const index = state.courses.findIndex(course => course.id === action.payload.id);
+          const updatedCourses = [...state.courses];
+          updatedCourses[index] = action.payload;
+          return { ...state, courses: updatedCourses };  
       default:
         return state;
     }

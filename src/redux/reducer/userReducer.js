@@ -1,7 +1,7 @@
 import { USER_LOGIN, USER_LOGOUT } from "../actions/types";
 
 const INITIAL_STATE = {
-  username: "",
+  username: localStorage.getItem('username') || "",
   auth: localStorage.getItem('auth') === 'true',
 };
 

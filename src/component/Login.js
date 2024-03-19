@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { loginUser } from "../redux/actions/userActions";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faLock} from '@fortawesome/free-solid-svg-icons';
 
 function LoginHandle() {
   const navigate = useNavigate();
@@ -23,20 +25,15 @@ function LoginHandle() {
 
   const handleLoginSubmit = (event) => {
     event.preventDefault();
-      axios.get(`http://localhost:8000/users?username=${username}&password=${password}`)
+    axios.get(`http://localhost:8000/users?username=${username}&password=${password}`)
       .then(response => {
-        if (response.data && Array.isArray(response.data)) {
-          console.log(response.data);
-          if (response.data.length > 0) {
+        if (response.data.length > 0) {
             dispatch(loginUser(username));
             localStorage.setItem('username', username);
             toast.success("Login successful");
             navigate('/');
-          } else {
-            toast.error("Invalid username or password");
-          }
         } else {
-          toast.error("Unexpected response from the server");
+            toast.error("Invalid username or password");
         }
       })
       .catch(error => {
@@ -47,41 +44,55 @@ function LoginHandle() {
 
   return (
     <Container className="mt-5">
-      <Row>
-        <Col md={{ span: 6, offset: 3 }}>
-          <Form onSubmit={handleLoginSubmit}>
-            <Form.Group className="mb-3" controlId="formBasicusername">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter username"
-                value={username}
-                onChange={handleUsernameChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <div className="password-toggle">
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                />
-              </div>
-            </Form.Group>
-            <Button
-              className={username&& password ? "active" : " "}
-              disabled={username && password ? false : true}
-              type="submit" 
-              variant="primary">
-              Submit
-            </Button>
-          </Form>
+      <Row className="justify-content-md-center">
+        <Col md={6}>
+          <Card className="p-4 shadow">
+            <Card.Body>
+              <Form onSubmit={handleLoginSubmit}>
+                <h2 className="text-center mb-4">Sign In</h2>
+                <Form.Group className="mb-3" controlId="formBasicUsername">
+                  <Form.Label>Username</Form.Label>
+                  <div className="input-group">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text"><FontAwesomeIcon icon={faUser} /></span>
+                    </div>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter username"
+                      value={username}
+                      onChange={handleUsernameChange}
+                    />
+                  </div>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Password</Form.Label>
+                  <div className="input-group">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text"><FontAwesomeIcon icon={faLock} /></span>
+                    </div>
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={handlePasswordChange}
+                    />
+                  </div>
+                </Form.Group>
+                <Button
+                  disabled={!username || !password}
+                  type="submit" 
+                  variant="primary" 
+                  className="w-100"
+                >
+                  Login
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>
   );
 }
 
-export default LoginHandle
+export default LoginHandle;

@@ -41,16 +41,7 @@ function AssessmentForm() {
   };
 
   return (
-    <>
-      <Navbar bg="dark" variant="dark" className="mb-4">
-        <Container>
-          <Navbar.Brand>           
-            Add New Assessment
-          </Navbar.Brand>
-        </Container>
-      </Navbar>
-
-      <Container>
+      <Container className='pt-5'>
         <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
           <h2>Create a New Assessment</h2>
           <Form.Group className="mb-3">
@@ -92,13 +83,12 @@ function AssessmentForm() {
           {questionType === '2' && <TrueFalse setQuestions={setQuestions} />}
           {questionType === '3' && <Essay setQuestions={setQuestions} />}
 
-          <Button variant="success" type="submit" disabled={!name || !questionType || !duration || questions.length === 0}>
+          <Button variant="success" type="submit" className="mt-3">
             <FontAwesomeIcon icon={faSave} className="mr-2" />{" "}
             Submit Assessment
           </Button>
         </Form>
       </Container>
-    </>
   );
 }
 

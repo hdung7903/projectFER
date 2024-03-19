@@ -47,13 +47,7 @@ function AssessmentEdit() {
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" className="mb-4">
-        <Container>
-          <Navbar.Brand>Edit Assessment</Navbar.Brand>
-        </Container>
-      </Navbar>
-
-      <Container>
+      <Container className='pt-5'>
         <Form onSubmit={handleFormSubmit}>
           <h2>Edit Assessment</h2>
           <Form.Group className="mb-3">

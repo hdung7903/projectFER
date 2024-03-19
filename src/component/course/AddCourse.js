@@ -80,7 +80,7 @@ function AddCourse() {
     course.chapters.some(chapter => chapter.title.trim() === '' || chapter.lessons.some(lesson => lesson.title.trim() === ''));
 
   return (
-    <Container className='my-4'>
+    <Container className='pt-5'>
       <Form onSubmit={handleSubmit}>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={2}>
