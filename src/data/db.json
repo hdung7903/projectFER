@@ -11,9 +11,82 @@
       "password": "123"
     },
     {
-      "id":"3",
-      "username":"tuancui",
-      "password":"tuancuivl"
+      "id": "3",
+      "username": "tuancui",
+      "password": "tuancuivl"
+    }
+  ],
+  "assessments": [
+    {
+      "id": 1,
+      "name": "Test",
+      "typeId": 1,
+      "duration": "120",
+      "questions": [
+        {
+          "id": 1,
+          "text": "React"
+        },
+        {
+          "id": 2,
+          "text": "React-Bootstrap"
+        },
+        {
+          "id": 3,
+          "text": "Redux"
+        }
+      ]
+    }
+  ],
+  "assess-type": [
+    {
+      "id": 1,
+      "type": "Multiple Choice"
+    },
+    {
+      "id": 2,
+      "type": "True/False"
+    },
+    {
+      "id": 3,
+      "type": "Essay"
+    }
+  ],
+  "courses": [
+    {
+      "id": "d16ad596-c0ee-4a3e-a027-5376cc5f1298",
+      "title": "React Crash Course",
+      "chapters": [
+        {
+          "id": "chapter1",
+          "title": "Introduce React",
+          "lessons": [
+            {
+              "id": "chapter1.1",
+              "title": "Basic Javascript"
+            },
+            {
+              "id": "chapter1.2",
+              "title": "Asynchronus"
+            }
+          ]
+        },
+        {
+          "id": "chapter2",
+          "title": "React-Bootstrap",
+          "lessons": [
+            {
+              "id": "chapter2.1",
+              "title": "Bootstrap"
+            }
+          ]
+        },
+        {
+          "id": "chapter3",
+          "title": "Axios",
+          "lessons": []
+        }
+      ]
     }
   ]
 }
